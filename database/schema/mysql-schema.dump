@@ -67,6 +67,21 @@ CREATE TABLE `personal_access_tokens` (
   KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `sessions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sessions` (
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text COLLATE utf8mb4_unicode_ci,
+  `payload` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_activity` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sessions_user_id_index` (`user_id`),
+  KEY `sessions_last_activity_index` (`last_activity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `tickets`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -90,15 +105,14 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `roll` int(11) NOT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `roll` int(11) DEFAULT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `users_email_unique` (`email`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -114,6 +128,8 @@ INSERT INTO `migrations` VALUES (3,'2019_08_19_000000_create_failed_jobs_table',
 INSERT INTO `migrations` VALUES (4,'2019_12_14_000001_create_personal_access_tokens_table',1);
 INSERT INTO `migrations` VALUES (5,'2022_04_16_164304_create_buses_table',1);
 INSERT INTO `migrations` VALUES (6,'2022_04_16_170514_create_tickets_table',1);
+INSERT INTO `migrations` VALUES (7,'2022_04_18_095722_create_sessions_table',2);
+
 
 INSERT INTO `buses` (`id`, `name`, `routes`) VALUES (1,'Achim Paribahan  (আছিম পরিবহন)','Gabtoli ⇄ Technical ⇄ Ansar Camp ⇄ Mirpur 1 ⇄ Sony Cinema Hall ⇄ Mirpur 2 ⇄ Mirpur 10 ⇄ Mirpur 11 ⇄ Purobi ⇄ Kalshi ⇄ ECB Square ⇄ MES ⇄ Shewra ⇄ Kuril Bishwa Road ⇄ Jamuna Future Park ⇄ Bashundhara ⇄ Nadda ⇄ Notun Bazar ⇄ Bashtola ⇄ Shahjadpur ⇄ Uttar Badda ⇄ Badda – Madhya Badda ⇄ Merul ⇄ Rampura Bridge ⇄ Banasree ⇄ Demra Staff Quarter'),
 (2,'Active Paribahan  (এক্টিভ পরিবহন)','Shia Masjid ⇄ Adabor ⇄ Shyamoli ⇄ Technical ⇄ Ansar Camp ⇄ Mirpur 1 ⇄ Sony Hall ⇄ Mirpur 2 ⇄ Mirpur 10 ⇄ Mirpur 11 ⇄ Purobi ⇄ Kalshi ⇄ ECB Square ⇄ MES ⇄ Shewrapara ⇄ Kuril Bishwa Road ⇄ Khilkhet ⇄ Airport ⇄ Jashimuddin ⇄ Rajlakshmi ⇄ Azampur ⇄ House Building ⇄ Abdullahpur'),
@@ -479,3 +495,6 @@ INSERT INTO `buses` (`id`, `name`, `routes`) VALUES (1,'Achim Paribahan  (আছ
 (182,'9 No.  Dhaka (৯নং বাস)','College Gate ⇄ Shishu Mela ⇄ Shyamoli ⇄ Kallyanpur ⇄ Darussalam ⇄ Technical ⇄ Bangla College ⇄ Tolarbag ⇄ Ansar Camp ⇄ Mirpur 1 ⇄ Sony Cinema Hall ⇄ Mirpur 2 ⇄ Proshika Moor ⇄ Pallabi ⇄ Mirpur 12
 ')
 ;
+
+
+INSERT INTO `users` (`id`, `name`, `password`,`address`,`number`, `roll`, `remember_token`, `created_at`, `updated_at`) VALUES (NULL, 'admin', '$2y$10$2SBEMkgjE2k1BPQ.t5lgleSM/eklZ3Exb9keAuNT8Yy8vlMaKsxBu', 'Unknown','00000000000','1', NULL, '2022-04-18 14:24:56', '2022-04-18 14:24:56');
