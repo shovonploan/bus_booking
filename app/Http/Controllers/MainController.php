@@ -10,17 +10,18 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Validation\Validates\Requests;
 use Illuminate\Foundation\AuthAccess\Authorizes\Resources;
 use Illuminate\Support\Facades\Auth;
-use Input;
+use Illuminate\Support\Facades\Session;
 
 use App\Models\user;
-
+use App\Models\bus;
 
 class MainController extends Controller
 {
 
     public function index()
     {
-        return view('index');
+        $buses = Bus::all();
+        return view('index', compact('buses'));
     }
 
     public function login()
@@ -46,11 +47,11 @@ class MainController extends Controller
                 'name' => $request->input('name'),
                 'password' => $request->input('password'),
             );
-            // attempt to do the login
             if (Auth::attempt($userdata)) {
-                return view('home');
+                $value = Session::put(['name' => $request->input('name')]);
+                return
+                    Redirect::to('');
             } else {
-                // validation not successful, send back to form
                 return Redirect::to('login');
             }
         }
@@ -84,5 +85,12 @@ class MainController extends Controller
             User::create($credentials);
             return Redirect::to('login');
         }
+    }
+
+    public function logOut()
+    {
+        Auth::logout();
+        Session::forget('name');
+        return Redirect::to('');
     }
 }

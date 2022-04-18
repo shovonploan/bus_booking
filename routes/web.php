@@ -20,3 +20,5 @@ Route::get('/login', [MainController::class, 'login'])->name('login');
 Route::post('/login', [MainController::class, 'loginCheck']);
 Route::get('/register', [MainController::class, 'register'])->name('register');
 Route::post('/register', [MainController::class, 'registerData']);
+
+Route::get('/logOut', [MainController::class, 'logOut'])->name('logOut');

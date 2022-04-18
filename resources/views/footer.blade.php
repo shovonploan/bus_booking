@@ -1,5 +1,5 @@
 <footer class="bg-light text-lg-start">
-    <div class="pt-4 text-center">
+    <div class="text-center">
         <a role="button" class="btn btn-primary btn-lg m-2" href="" rel="nofollow" target="_blank">
             Email US
         </a>
