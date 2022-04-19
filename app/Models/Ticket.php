@@ -11,10 +11,18 @@ class Ticket extends Model
 {
     use HasFactory;
 
-    public function bus(){
-        return $this->belongsTo(User::class,'user_id','id');
+    protected $fillable = [
+        'user_id',
+        'bus_id',
+        'dept',
+    ];
+
+    public function bus()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
-    public function user(){
-        return $this->belongsTo(Bus::class,'bus_id','id');
+    public function user()
+    {
+        return $this->belongsTo(Bus::class, 'bus_id', 'id');
     }
 }

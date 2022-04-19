@@ -7,19 +7,43 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Validation\Validates\Requests;
-use Illuminate\Foundation\AuthAccess\Authorizes\Resources;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
+
 
 use App\Models\user;
 use App\Models\bus;
+use App\Models\ticket;
 
 class MainController extends Controller
 {
 
+    public function endName()
+    {
+        while (Session::has('route')) {
+            Session::forget('name');
+        }
+    }
+    public function endRoute()
+    {
+        while (Session::has('route')) {
+            Session::forget('route');
+        }
+        while (Session::has('routeT')) {
+            Session::forget('routeT');
+        }
+    }
+    public function endBusId()
+    {
+        while (Session::has('id')) {
+            Session::forget('id');
+        }
+    }
     public function index()
     {
+        $this->endRoute();
+        $this->endBusId();
         $buses = Bus::all();
         return view('index', compact('buses'));
     }
@@ -48,6 +72,10 @@ class MainController extends Controller
                 'password' => $request->input('password'),
             );
             if (Auth::attempt($userdata)) {
+                // TODO : Role
+                // $role = User::where('name', '=', 'admin');
+                // dd($role);
+                // $value =Session::put(['name' => $request->input('name'), 'role' => $role]);
                 $value = Session::put(['name' => $request->input('name')]);
                 return
                     Redirect::to('');
@@ -68,7 +96,7 @@ class MainController extends Controller
             'name' => 'required|max:255',
             'password' => 'required',
             'address' => 'required',
-            'number' => 'required|max:11'
+            'number' => 'required|max:11|min:11'
         ]);
         if ($validator->fails()) {
             return
@@ -90,7 +118,120 @@ class MainController extends Controller
     public function logOut()
     {
         Auth::logout();
-        Session::forget('name');
+        $this->endName();
+        $this->endRoute();
+        $this->endBusId();
         return Redirect::to('');
+    }
+
+    public function booking()
+    {
+        $this->endRoute();
+        $this->endBusId();
+        return view('booking');
+    }
+
+    public function bookingSearch(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'From' => 'required|max:255',
+            'To' => 'required|max:255',
+        ]);
+        if ($validator->fails()) {
+            return
+                Redirect::back()->withErrors($validator)
+                ->withInput();
+        } else {
+            $buses = Bus::all();
+            $bus_id = array();
+            foreach ($buses as $bus) {
+                $str = $bus->routes;
+                if (strpos($str, $request->input('From')) && strpos($str, $request->input('To'))) {
+                    array_push($bus_id, $bus->id);
+                }
+            }
+            $Rbuses = Bus::whereIn('id', $bus_id)->get();
+            if (empty($Rbuses))
+                return Redirect::back()->withErrors(['msg' => 'No Bus found']);
+            $this->endRoute();
+            Session::put(['route' => $request->input('From')]);
+            Session::put(['routeT' => $request->input('To')]);
+            return view('booking', compact('Rbuses'));
+        }
+    }
+
+    public function booked($id)
+    {
+        Session::put(['id' => $id]);
+        return view('confirm');
+    }
+    public function bookedCancel($id)
+    {
+        Ticket::where('id', $id)->delete();
+        $user_id = User::where('name', Session::get('name'))->first();
+        $tickets = Ticket::where('user_id', $user_id->id)->get();
+        $bus_id = array();
+        foreach ($tickets as $ticket) {
+            array_push($bus_id, $ticket->bus_id);
+        }
+        $buses = Bus::whereIn('id', $bus_id)->get();
+        return view('showTickets', compact('tickets', 'buses'));
+    }
+    public function back()
+    {
+        $this->endBusId();
+        $buses = Bus::all();
+        $bus_id = array();
+        foreach ($buses as $bus) {
+            $str = $bus->routes;
+            if (strpos($str, Session::get('route')) && strpos($str, Session::get('route'))) {
+                array_push($bus_id, $bus->id);
+            }
+        }
+        $Rbuses = Bus::whereIn('id', $bus_id)->get();
+        if (empty($Rbuses))
+            return Redirect::back()->withErrors(['msg' => 'No Bus found']);
+        return view('booking', compact('Rbuses'));
+    }
+    public function confirmBooked(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'date' => 'required|max:255',
+        ]);
+        if ($validator->fails()) {
+            return
+                Redirect::back()->withErrors($validator)
+                ->withInput();
+        } else {
+            if ($request->input('date') < date("Y-m-d")) {
+                return Redirect::back()->withErrors(['msg' => 'Date Not Available']);
+            }
+            $user_id = User::where('name', Session::get('name'))->first();
+            $credentials = array(
+                'user_id' => $user_id->id,
+                'bus_id' => Session::get('id'),
+                'dept' => $request->input('date'),
+            );
+            Ticket::create($credentials);
+
+            $this->endRoute();
+            $this->endBusId();
+            return view('booking');
+        }
+    }
+
+    public function showTickets()
+    {
+        $this->endRoute();
+        $this->endBusId();
+        $user_id = User::where('name', Session::get('name'))->first();
+        DB::table('tickets')->where('dept', '<', date("Y-m-d"))->delete();
+        $tickets = Ticket::where('user_id', $user_id->id)->get();
+        $bus_id = array();
+        foreach ($tickets as $ticket) {
+            array_push($bus_id, $ticket->bus_id);
+        }
+        $buses = Bus::whereIn('id', $bus_id)->get();
+        return view('showTickets', compact('tickets', 'buses'));
     }
 }
