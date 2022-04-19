@@ -1,22 +1,23 @@
 @extends('template')
 
 @section('title')
-Ticket Booked
+All Tickets
 @endsection
 
 @section('main_content')
-<div class="bg-image shadow-2-strong" style="background-image: url(http://bus_booking.test/images/bus_bg_03.jpg
+<div class="bg-image shadow-2-strong" style="background-image: url(http://bus_booking.test/images/bus_bg_04.jpg
     );background-repeat: no-repeat; height: 100vh;">
     <div class="mask" style="background-color: rgba(0, 0, 0, 0.4); height: 100vh;">
         <div class="container">
             <div class="text-center" style="padding-top:30px;">
-                <h1 class="text-light" style="font-size: 4rem; font-weight: bold;">Tickets</h1>
+                <h1 class="text-light" style="font-size: 4rem; font-weight: bold;">All Tickets Purchased</h1>
             </div>
         </div>
         <div class="container p-5">
             <table class="table" style="opacity: 0.9;">
                 <thead class="table-success">
                     <tr>
+                        <th scope="col" class="text-center">User Name</th>
                         <th scope="col" class="text-center">Bus Name</th>
                         <th scope="col" class="text-center">Date</th>
                         <th scope="col" class="text-center">Cancel</th>
@@ -25,6 +26,13 @@ Ticket Booked
                 <tbody class="table-secondary">
                     @foreach($tickets as $ticket)
                     <tr>
+                        <td class="text-center">
+                            @foreach($users as $user)
+                            @if($user->id===$ticket->user_id)
+                            {{strtoupper($user->name)}}
+                            @endif
+                            @endforeach
+                        </td>
                         <td class="text-center">
                             @foreach($buses as $bus)
                             @if($bus->id===$ticket->bus_id)
@@ -38,7 +46,7 @@ Ticket Booked
                                     style="
                                 text-decoration: none;
                                 display: inline-block;
-                                ">Cancel Booking</a></button></td>
+                                ">Cancel Ticket</a></button></td>
                     </tr>
                     @endforeach
                 </tbody>

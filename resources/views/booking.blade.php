@@ -51,7 +51,11 @@ Bus Booking
                             </div>
                             @if($errors->any())
                             @foreach ($errors->all() as $error)
+                            @if($error==="Ticket Purchased")
+                            <h4 style="color:rgb(0, 255, 250)">{{ $error }}</h4>
+                            @else
                             <h4 style="color:red">{{ $error }}</h4>
+                            @endif;
                             @endforeach
                             @endif
                             @if(session()->has('route'))

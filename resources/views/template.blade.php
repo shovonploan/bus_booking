@@ -26,7 +26,8 @@ http://bus_booking.test/script.js
             <a class="list-group-item list-group-item-action list-group-item-light p-3"
                 href="{{route('showTickets')}}">Show Tickets</a>
             @if(session()->get('name')=='admin')
-            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Ticket
+            <a class="list-group-item list-group-item-action list-group-item-light p-3"
+                href="{{route('showPurchased')}}">Ticket
                 Purchased</a>
             @endif
         </div>

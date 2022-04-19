@@ -31,3 +31,4 @@ Route::get('/back', [MainController::class, 'back'])->name('back');
 Route::get('/bookedCancel/{id}', [MainController::class, 'bookedCancel']);
 
 Route::get('/showTickets', [MainController::class, 'showTickets'])->name('showTickets');
+Route::get('/showPurchased', [MainController::class, 'showPurchased'])->name('showPurchased');

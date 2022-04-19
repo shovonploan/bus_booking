@@ -14,7 +14,7 @@ Bus Booking
         </div>
     </div>
     <div class="container p-5">
-        <table class="table">
+        <table class="table" style="opacity: 0.8;">
             <thead class="table-success">
                 <tr>
                     <th scope="col" class="text-center">Bus Name</th>

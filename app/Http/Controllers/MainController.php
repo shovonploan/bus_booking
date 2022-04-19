@@ -21,7 +21,7 @@ class MainController extends Controller
 
     public function endName()
     {
-        while (Session::has('route')) {
+        while (Session::has('name')) {
             Session::forget('name');
         }
     }
@@ -216,7 +216,7 @@ class MainController extends Controller
 
             $this->endRoute();
             $this->endBusId();
-            return view('booking');
+            return Redirect::to('http://bus_booking.test/booking')->withErrors(['msg' => 'Ticket Purchased']);
         }
     }
 
@@ -233,5 +233,24 @@ class MainController extends Controller
         }
         $buses = Bus::whereIn('id', $bus_id)->get();
         return view('showTickets', compact('tickets', 'buses'));
+    }
+
+    public function showPurchased()
+    {
+        $this->endRoute();
+        $this->endBusId();
+        DB::table('tickets')->where('dept', '<', date("Y-m-d"))->delete();
+        $tickets = Ticket::all();
+        $bus_id = array();
+        foreach ($tickets as $ticket) {
+            array_push($bus_id, $ticket->bus_id);
+        }
+        $buses = Bus::whereIn('id', $bus_id)->get();
+        $user_id = array();
+        foreach ($tickets as $ticket) {
+            array_push($user_id, $ticket->bus_id);
+        }
+        $users = User::whereIn('id', $user_id)->get();
+        return view('showPurchased', compact('tickets', 'buses', 'users'));
     }
 }
