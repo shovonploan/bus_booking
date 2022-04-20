@@ -177,6 +177,7 @@ class MainController extends Controller
         $buses = Bus::whereIn('id', $bus_id)->get();
         return view('showTickets', compact('tickets', 'buses'));
     }
+
     public function back()
     {
         $this->endBusId();
@@ -193,6 +194,7 @@ class MainController extends Controller
             return Redirect::back()->withErrors(['msg' => 'No Bus found']);
         return view('booking', compact('Rbuses'));
     }
+
     public function confirmBooked(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -248,9 +250,19 @@ class MainController extends Controller
         $buses = Bus::whereIn('id', $bus_id)->get();
         $user_id = array();
         foreach ($tickets as $ticket) {
-            array_push($user_id, $ticket->bus_id);
+            array_push($user_id, $ticket->user_id);
         }
         $users = User::whereIn('id', $user_id)->get();
         return view('showPurchased', compact('tickets', 'buses', 'users'));
+    }
+
+    public function profile($name)
+    {
+        $this->endRoute();
+        $this->endBusId();
+        if (Session::get('name') != $name)
+            return Redirect::to('');
+        $user = User::where('name', $name)->first();
+        return view('profile', compact('user'));
     }
 }

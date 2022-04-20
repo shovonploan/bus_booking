@@ -49,7 +49,8 @@ http://bus_booking.test/script.js
                                 data-bs-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">{{strtoupper(session()->get('name'))}}</a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#!">Profile</a>
+                                <a class="dropdown-item"
+                                    href="http://bus_booking.test/profile/{{session()->get('name')}}">Profile</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{route('logOut')}}">Logout</a>
                             </div>

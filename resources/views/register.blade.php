@@ -4,7 +4,7 @@
 Register
 @endsection
 @section('body')
-<div class="bg-image shadow-2-strong" style="background-image: url(http://bus_booking.test/images/bus_bg.jpg
+<div class="bg-image shadow-2-strong" style="background-image: url(http://bus_booking.test/images/bus_bg_01.jpg
     );background-repeat: no-repeat; height: 100vh;">
     <div class="mask" style="background-color: rgba(0, 0, 0, 0.4); height: 100vh;">
         <div class="container"
